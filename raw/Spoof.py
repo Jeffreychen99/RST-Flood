@@ -1,7 +1,6 @@
 import requests
 import socket
 import sys
-from scapy.all import *
 from struct import *
 
 from IP_Header import IP_Header
